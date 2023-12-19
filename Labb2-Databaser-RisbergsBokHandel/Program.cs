@@ -455,6 +455,7 @@ void ListaLagersaldo(int storeId)
         
     }
 
+    Console.WriteLine("'ENTER' för att återgå till menyn");
     Console.ReadKey();
     Console.Clear();
     Mainmenu();
