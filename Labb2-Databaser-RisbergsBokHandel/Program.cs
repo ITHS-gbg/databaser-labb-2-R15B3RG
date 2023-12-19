@@ -18,8 +18,10 @@ void Mainmenu()
     options = new List<Option>
 
     {
-        new Option("Se Lagersaldo", () => ListaLagersaldo()),
-        new Option("Hantera Lagersaldo", () =>  HanteraLagersaldo()),
+        new Option("Pappersdrömmar", () => Pappersdrömmar()),
+        new Option("Ordens Rike", () =>  OrdensRike()),
+        new Option("Bokstavliga äventyr", () =>  BokstavligaÄventyr()),
+        new Option("Bladvändarbutiken", () =>  BladvändarButiken()),
         new Option("Avsluta", () => Environment.Exit(0)),
     };
 
@@ -48,7 +50,7 @@ void Mainmenu()
                 WriteMenu(options, options[index]);
             }
         }
-        
+
         if (keyinfo.Key == ConsoleKey.Enter)
         {
             options[index].Selected.Invoke();
@@ -59,11 +61,11 @@ void Mainmenu()
 
     Console.ReadKey();
 
-    static void WriteMenu(List < Option > options, Option selectedOption)
+    static void WriteMenu(List<Option> options, Option selectedOption)
     {
         Console.Clear();
 
-        Console.WriteLine("Välkommen till den mysiga bokhandelns databas!\nVälj ett av nedanstående alternativ:\n");
+        Console.WriteLine("Välkommen till den mysiga bokhandelns databas!\nVälj vilken butik du vill kolla:\n");
 
         foreach (Option option in options)
         {
@@ -82,390 +84,380 @@ void Mainmenu()
 
 }
 
-void HanteraLagersaldo()
-{
-    Console.Clear();
-
-    Console.WriteLine("Välj vilken butik du vill justera ditt lagersaldo i: \n");
-
-    foreach (var butik in db.Butikers)
-    {
-        Console.WriteLine($"{butik.Id} - {butik.StoreName} \n");
-    }
-
-    Console.WriteLine("För att återgå till huvudmenyn, tryck ENTER");
-
-    string input = Console.ReadLine();
-
-    if (input == "1")
-    {
-        Console.Clear();
-        Pappersdrömmar();
-    }
-    else if (input == "2")
-    {
-        Console.Clear();
-        OrdensRike();
-    }
-    else if (input == "3")
-    {
-        Console.Clear();
-        BokstavligaÄventyr();
-    }
-    else if (input == "4")
-    {
-        Console.Clear();
-        BladvändarButiken();
-    }
-    else
-    {
-        Console.Clear();
-        Mainmenu();
-    }
-
-
-}
-
 void Pappersdrömmar()
 {
 
-    Console.Clear();
+    List<Option> options;
 
-    Console.ForegroundColor = ConsoleColor.DarkGreen;
+    options = new List<Option>
 
-    var store = db.Butikers.Find(1).StoreName;
-
-    Console.WriteLine($"{store.ToUpper()}\n");
-
-    Console.ResetColor();
-
-    Console.WriteLine("Välj att lägga till eller ta bort böcker ur lagersaldot:\n" +
-                      "\n 1. Lägg till"
-                      + "\n 2. Ta bort"
-                      + "\n 3. Föregående meny"
-                      + "\n 4. Återgå till huvudmeny");
-
-    string input = Console.ReadLine();
-
-    if (input == "1")
     {
-        AddBooks(1);
+        new Option("Se lagersaldot", () => ListaLagersaldo(1)),
+        new Option("Lägg till böcker", () =>  AddBooks(1)),
+        new Option("Ta bort böcker", () =>  RemoveBooks(1)),
+        new Option("Gå till huvudmenyn", () =>  Mainmenu()),
+    };
+
+    int index = 0;
+
+    WriteMenu(options, options[index]);
+
+    ConsoleKeyInfo keyinfo;
+    do
+    {
+        keyinfo = Console.ReadKey();
+
+        if (keyinfo.Key == ConsoleKey.DownArrow)
+        {
+            if (index + 1 < options.Count)
+            {
+                index++;
+                WriteMenu(options, options[index]);
+            }
+        }
+        if (keyinfo.Key == ConsoleKey.UpArrow)
+        {
+            if (index - 1 >= 0)
+            {
+                index--;
+                WriteMenu(options, options[index]);
+            }
+        }
+
+        if (keyinfo.Key == ConsoleKey.Enter)
+        {
+            options[index].Selected.Invoke();
+            index = 0;
+        }
     }
+    while (keyinfo.Key != ConsoleKey.X);
 
-    else if (input == "2")
+    Console.ReadKey();
+
+    void WriteMenu(List<Option> options, Option selectedOption)
     {
-        RemoveBooks(1);
-    }
-    else if (input == "3")
-    {
+
         Console.Clear();
-        HanteraLagersaldo();
-    }
-    else if (input == "4")
-    {
-        Console.Clear();
-        Mainmenu();
-    }
-    else
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Felaktigt menyval. Försök igen!");
-        Console.ReadKey();
+
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+        var store = db.Butikers.Find(1)?.StoreName;
+
+        Console.WriteLine($"{store.ToUpper()}\n");
+
         Console.ResetColor();
-        Console.Clear();
-        Pappersdrömmar();
+
+        foreach (Option option in options)
+        {
+            if (option == selectedOption)
+            {
+                Console.Write("-> ");
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+
+            Console.WriteLine(option.Name);
+        }
     }
+
+    Pappersdrömmar();
 
 }
 
 void OrdensRike()
 {
 
-    Console.Clear();
+    List<Option> options;
 
-    Console.ForegroundColor = ConsoleColor.DarkGreen;
+    options = new List<Option>
 
-    var store = db.Butikers.Find(2).StoreName;
-
-    Console.WriteLine($"{store.ToUpper()}\n");
-
-    Console.ResetColor();
-
-    Console.WriteLine("Välj att lägga till eller ta bort böcker ur lagersaldot:\n" +
-                      "\n 1. Lägg till"
-                      + "\n 2. Ta bort"
-                      + "\n 3. Föregående meny"
-                      + "\n 4. Återgå till huvudmeny");
-
-    string input = Console.ReadLine();
-
-    if (input == "1")
     {
-        AddBooks(2);
+        new Option("Se lagersaldot", () => ListaLagersaldo(2)),
+        new Option("Lägg till böcker", () =>  AddBooks(2)),
+        new Option("Ta bort böcker", () =>  RemoveBooks(2)),
+        new Option("Gå till huvudmenyn", () =>  Mainmenu()),
+    };
+
+    int index = 0;
+
+    WriteMenu(options, options[index]);
+
+    ConsoleKeyInfo keyinfo;
+    do
+    {
+        keyinfo = Console.ReadKey();
+
+        if (keyinfo.Key == ConsoleKey.DownArrow)
+        {
+            if (index + 1 < options.Count)
+            {
+                index++;
+                WriteMenu(options, options[index]);
+            }
+        }
+        if (keyinfo.Key == ConsoleKey.UpArrow)
+        {
+            if (index - 1 >= 0)
+            {
+                index--;
+                WriteMenu(options, options[index]);
+            }
+        }
+
+        if (keyinfo.Key == ConsoleKey.Enter)
+        {
+            options[index].Selected.Invoke();
+            index = 0;
+        }
     }
-    else if (input == "2")
+    while (keyinfo.Key != ConsoleKey.X);
+
+    Console.ReadKey();
+
+    void WriteMenu(List<Option> options, Option selectedOption)
     {
-        RemoveBooks(2);
-    }
-    else if (input == "3")
-    {
+
         Console.Clear();
-        HanteraLagersaldo();
-    }
-    else if (input == "4")
-    {
-        Console.Clear();
-        Mainmenu();
-    }
-    else
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Felaktigt menyval. Försök igen!");
-        Console.ReadKey();
+
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+        var store = db.Butikers.Find(2)?.StoreName;
+
+        Console.WriteLine($"{store.ToUpper()}\n");
+
         Console.ResetColor();
-        Console.Clear();
-        OrdensRike();
+
+        foreach (Option option in options)
+        {
+            if (option == selectedOption)
+            {
+                Console.Write("-> ");
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+
+            Console.WriteLine(option.Name);
+        }
     }
+
+    OrdensRike();
 }
 
 void BokstavligaÄventyr()
 {
 
-    Console.Clear();
+    List<Option> options;
 
-    Console.ForegroundColor = ConsoleColor.DarkGreen;
+    options = new List<Option>
 
-    var store = db.Butikers.Find(3).StoreName;
-
-    Console.WriteLine($"{store.ToUpper()}\n");
-
-    Console.ResetColor();
-
-    Console.WriteLine("Välj att lägga till eller ta bort böcker ur lagersaldot:\n" +
-                      "\n 1. Lägg till"
-                      + "\n 2. Ta bort"
-                      + "\n 3. Föregående meny"
-                      + "\n 4. Återgå till huvudmeny");
-
-    string input = Console.ReadLine();
-
-    if (input == "1")
     {
-        AddBooks(3);
+        new Option("Se lagersaldot", () => ListaLagersaldo(3)),
+        new Option("Lägg till böcker", () =>  AddBooks(3)),
+        new Option("Ta bort böcker", () =>  RemoveBooks(3)),
+        new Option("Gå till huvudmenyn", () =>  Mainmenu()),
+    };
+
+    int index = 0;
+
+    WriteMenu(options, options[index]);
+
+    ConsoleKeyInfo keyinfo;
+    do
+    {
+        keyinfo = Console.ReadKey();
+
+        if (keyinfo.Key == ConsoleKey.DownArrow)
+        {
+            if (index + 1 < options.Count)
+            {
+                index++;
+                WriteMenu(options, options[index]);
+            }
+        }
+        if (keyinfo.Key == ConsoleKey.UpArrow)
+        {
+            if (index - 1 >= 0)
+            {
+                index--;
+                WriteMenu(options, options[index]);
+            }
+        }
+
+        if (keyinfo.Key == ConsoleKey.Enter)
+        {
+            options[index].Selected.Invoke();
+            index = 0;
+        }
     }
-    else if (input == "2")
+    while (keyinfo.Key != ConsoleKey.X);
+
+    Console.ReadKey();
+
+    void WriteMenu(List<Option> options, Option selectedOption)
     {
-        RemoveBooks(3);
-    }
-    else if (input == "3")
-    {
+
         Console.Clear();
-        HanteraLagersaldo();
-    }
-    else if (input == "4")
-    {
-        Console.Clear();
-        Mainmenu();
-    }
-    else
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Felaktigt menyval. Försök igen!");
-        Console.ReadKey();
+
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+        var store = db.Butikers.Find(3)?.StoreName;
+
+        Console.WriteLine($"{store.ToUpper()}\n");
+
         Console.ResetColor();
-        Console.Clear();
-        BokstavligaÄventyr();
+
+        foreach (Option option in options)
+        {
+            if (option == selectedOption)
+            {
+                Console.Write("-> ");
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+
+            Console.WriteLine(option.Name);
+        }
     }
+
+    BokstavligaÄventyr();
 }
 
 void BladvändarButiken()
 {
 
+    List<Option> options;
+
+    options = new List<Option>
+
+    {
+        new Option("Se lagersaldot", () => ListaLagersaldo(4)),
+        new Option("Lägg till böcker", () =>  AddBooks(4)),
+        new Option("Ta bort böcker", () =>  RemoveBooks(4)),
+        new Option("Gå till huvudmenyn", () =>  Mainmenu()),
+    };
+
+    int index = 0;
+
+    WriteMenu(options, options[index]);
+
+    ConsoleKeyInfo keyinfo;
+    do
+    {
+        keyinfo = Console.ReadKey();
+
+        if (keyinfo.Key == ConsoleKey.DownArrow)
+        {
+            if (index + 1 < options.Count)
+            {
+                index++;
+                WriteMenu(options, options[index]);
+            }
+        }
+        if (keyinfo.Key == ConsoleKey.UpArrow)
+        {
+            if (index - 1 >= 0)
+            {
+                index--;
+                WriteMenu(options, options[index]);
+            }
+        }
+
+        if (keyinfo.Key == ConsoleKey.Enter)
+        {
+            options[index].Selected.Invoke();
+            index = 0;
+        }
+    }
+    while (keyinfo.Key != ConsoleKey.X);
+
+    Console.ReadKey();
+
+    void WriteMenu(List<Option> options, Option selectedOption)
+    {
+
+        Console.Clear();
+
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+        var store = db.Butikers.Find(4)?.StoreName;
+
+        Console.WriteLine($"{store.ToUpper()}\n");
+
+        Console.ResetColor();
+
+        foreach (Option option in options)
+        {
+            if (option == selectedOption)
+            {
+                Console.Write("-> ");
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+
+            Console.WriteLine(option.Name);
+        }
+    }
+}
+
+void ListaLagersaldo(int storeId)
+{
+
     Console.Clear();
 
     Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-    var store = db.Butikers.Find(4).StoreName;
+    var store = db.Butikers.Find(storeId).StoreName;
 
     Console.WriteLine($"{store.ToUpper()}\n");
 
     Console.ResetColor();
 
-    Console.WriteLine("Välj att lägga till eller ta bort böcker ur lagersaldot:\n" +
-                      "\n 1. Lägg till"
-                      + "\n 2. Ta bort"
-                      + "\n 3. Föregående meny"
-                      + "\n 4. Återgå till huvudmeny");
+    var saldo = db.LagerSaldos
+        .Include(s => s.Store)
+        .Include(s => s.IsbnNavigation)
+        .Where(s => s.StoreId == storeId).ToList();
 
-    string input = Console.ReadLine();
+    Console.WriteLine("Böcker i butiken:".ToUpper() + "\n");
 
-    if (input == "1")
+    Console.ForegroundColor = ConsoleColor.Blue;
+    Console.WriteLine("-----------------------------------------------------------------");
+    Console.ResetColor();
+    Console.WriteLine("\n");
+
+    foreach (var stock in saldo)
     {
-        AddBooks(4);
-    }
-    else if (input == "2")
-    {
-        RemoveBooks(4);
-    }
-    else if (input == "3")
-    {
-        Console.Clear();
-        HanteraLagersaldo();
-    }
-    else if (input == "4")
-    {
-        Console.Clear();
-        Mainmenu();
-    }
-    else
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Felaktigt menyval. Försök igen!");
-        Console.ReadKey();
+        Console.WriteLine($"Titel: {stock.IsbnNavigation.Title}");
+        Console.WriteLine($"Saldo: {stock.Quantity}");
+        Console.WriteLine($"ISBN: {stock.Isbn}");
+
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"Författare: {stock.IsbnNavigation.FörfattareFirstName} {stock.IsbnNavigation.FörfattareLastName}");
+
         Console.ResetColor();
-        Console.Clear();
-        BladvändarButiken();
-    }
-}
 
-void ListaLagersaldo()
-{
+        Console.WriteLine("\n");
+
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("-----------------------------------------------------------------");
+        Console.ResetColor();
+
+        Console.WriteLine("\n");
+
+        
+    }
+
+    Console.ReadKey();
     Console.Clear();
-
-    Console.WriteLine("Välj butik: \n");
-
-    foreach (var butik in db.Butikers)
-    {
-        Console.WriteLine($"{butik.Id} - {butik.StoreName}");
-    }
-    
-    string input = Console.ReadLine();
-
-    if (input == "1")
-    {
-        Console.Clear();
-
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-
-        var store = db.Butikers.Find(1).StoreName;
-
-        Console.WriteLine($"{store.ToUpper()}\n");
-
-        Console.ResetColor();
-
-        var saldo = db.LagerSaldos
-            .Include(s => s.Store)
-            .Include(s => s.IsbnNavigation)
-            .Where(s => s.StoreId == 1).ToList();
-
-        Console.WriteLine("Böcker i butiken:".ToUpper() + "\n");
-
-        foreach (var stock in saldo)
-        {
-            Console.WriteLine($"Titel: {stock.IsbnNavigation.Title} \nSaldo: {stock.Quantity}\nISBN: {stock.Isbn}\n");
-        }
-
-        Console.ReadKey();
-        Console.Clear();
-        Mainmenu();
-
-    }
-    else if (input == "2")
-    {
-
-        Console.Clear();
-
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-
-        var store = db.Butikers.Find(2).StoreName;
-
-        Console.WriteLine($"{store.ToUpper()}\n");
-
-        Console.ResetColor();
-
-        var saldo = db.LagerSaldos
-            .Include(s => s.Store)
-            .Include(s => s.IsbnNavigation)
-            .Where(s => s.StoreId == 2).ToList();
-
-        Console.WriteLine("Böcker i butiken:".ToUpper() + "\n");
-
-        foreach (var stock in saldo)
-        {
-            Console.WriteLine($"Titel: {stock.IsbnNavigation.Title} \nSaldo: {stock.Quantity}\nISBN: {stock.Isbn}\n");
-        }
-
-        Console.ReadKey();
-        Console.Clear();
-        Mainmenu();
-    }
-    else if (input == "3")
-    {
-
-        Console.Clear();
-
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-
-        var store = db.Butikers.Find(3).StoreName;
-
-        Console.WriteLine($"{store.ToUpper()}\n");
-
-        Console.ResetColor();
-
-        var saldo = db.LagerSaldos
-            .Include(s => s.Store)
-            .Include(s => s.IsbnNavigation)
-            .Where(s => s.StoreId == 3).ToList();
-
-        Console.WriteLine("Böcker i butiken:".ToUpper() + "\n");
-
-        foreach (var stock in saldo)
-        {
-            Console.WriteLine($"Titel: {stock.IsbnNavigation.Title} \nSaldo: {stock.Quantity}\nISBN: {stock.Isbn}\n");
-        }
-
-        Console.ReadKey();
-        Console.Clear();
-        Mainmenu();
-    }
-    else if (input == "4")
-    {
-
-        Console.Clear();
-
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-
-        var store = db.Butikers.Find(4).StoreName;
-
-        Console.WriteLine($"{store.ToUpper()}\n");
-
-        Console.ResetColor();
-
-        var saldo = db.LagerSaldos
-            .Include(s => s.Store)
-            .Include(s => s.IsbnNavigation)
-            .Where(s => s.StoreId == 4).ToList();
-
-        Console.WriteLine("Böcker i butiken:".ToUpper() + "\n");
-
-        foreach (var stock in saldo)
-        {
-            Console.WriteLine($"Titel: {stock.IsbnNavigation.Title} \nSaldo: {stock.Quantity}\nISBN: {stock.Isbn}\n");
-        }
-
-        Console.ReadKey();
-        Console.Clear();
-        Mainmenu();
-    }
-    else
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Felaktigt menyval. Du omdirigeras till huvudmenyn.");
-        Console.ReadKey();
-        Console.ResetColor();
-        Console.Clear();
-        Mainmenu();
-    }
+    Mainmenu();
 }
 
 void AddBooks(int storeId)
@@ -526,7 +518,7 @@ void AddBooks(int storeId)
 
     Console.ReadKey();
     Console.Clear();
-    HanteraLagersaldo();
+    Mainmenu();
 }
 
 void RemoveBooks(int storeId)
@@ -587,6 +579,6 @@ void RemoveBooks(int storeId)
 
     Console.ReadKey();
     Console.Clear();
-    HanteraLagersaldo();
+    Mainmenu();
 }
 
